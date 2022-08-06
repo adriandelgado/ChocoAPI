@@ -20,7 +20,7 @@ pub fn add_error<T: Eq + Hash + Clone, U: Clone>(
     if !m.contains_key(&key) {
         m.insert(key.clone(), Vec::new());
     }
-    m.get_mut(&key).unwrap().push(value.into());
+    m.get_mut(&key).unwrap().push(value);
     m
 }
 

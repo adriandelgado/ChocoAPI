@@ -224,6 +224,9 @@ jobs:
             --no-default-features
             --locked
 
+      - name: Migrate database
+        run: sqlx migrate run
+
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
         with:

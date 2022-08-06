@@ -125,7 +125,7 @@ impl InsertableUserBuilder {
             errors = add_error(errors, "email".to_string(), "Missing field".to_string());
         }
 
-        if errors.len() == 0 {
+        if errors.is_empty() {
             Ok(InsertableUser {
                 username: self.username,
                 full_name: self.full_name,
