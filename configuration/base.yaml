@@ -4,3 +4,5 @@ database:
   port: 5432
   username: "postgres"
   database_name: "chocodb"
+redis:
+  port: 6379

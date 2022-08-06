@@ -31,6 +31,8 @@ pub struct TestApp {
     pub db: TestDatabase,
     /// An http client to be used to hit the API during tests.
     pub api_client: reqwest::Client,
+    /// A connection to a redis instance.
+    pub redis_client: redis::Client,
 }
 
 impl TestApp {
@@ -46,6 +48,8 @@ impl TestApp {
 
         // Create the test database
         let db = TestDatabase::new(&configuration).await;
+
+        let redis_client = chocoapi::configuration::get_redis_client(&configuration.redis).await;
 
         // Launch the application as a background task
         let (address, port) = {
@@ -73,6 +77,7 @@ impl TestApp {
             port,
             db,
             api_client,
+            redis_client,
         }
     }
 }

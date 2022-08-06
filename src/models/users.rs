@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::erro::ErrorMap;
+use crate::erro::add_error;
 
 /// A domain user.
 #[derive(Serialize, Deserialize)]
@@ -109,19 +110,19 @@ impl InsertableUserBuilder {
     /// Build a new `InsertableUser` from this `InsertableUserBuilder`.
     /// # Panics
     /// - never
-    pub fn build(self) -> Result<InsertableUser, ErrorMap<&'static str, &'static str>> {
-        let mut errors = ErrorMap::new();
+    pub fn build(self) -> Result<InsertableUser, HashMap<String, Vec<String>>> {
+        let mut errors = HashMap::new();
 
         if self.username.is_empty() {
-            errors.add_error("username", "Missing field");
+            errors = add_error(errors, "username".to_string(), "Missing field".to_string());
         }
 
         if self.passwd_hash.is_empty() {
-            errors.add_error("password", "Missing field");
+            errors = add_error(errors, "password".to_string(), "Missing field".to_string());
         }
 
         if self.email_id.is_none() {
-            errors.add_error("email", "Missing field");
+            errors = add_error(errors, "email".to_string(), "Missing field".to_string());
         }
 
         if errors.len() == 0 {

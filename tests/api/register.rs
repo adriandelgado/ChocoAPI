@@ -36,8 +36,19 @@ async fn hitting_register_with_valid_data_returns_created_and_new_user_as_json()
     assert_eq!(Some("John Doe".to_string()), created_user.full_name);
     assert_eq!("johndoe".to_string(), created_user.username);
 
-    // TODO: check that the user is persisted to the database and
-    // that their email is not confirmed
+    let db_user = sqlx::query_as!(
+        User,
+        r#"
+        SELECT * FROM users
+         WHERE username = $1
+        "#,
+        created_user.username
+    )
+    .fetch_one(&*app.db)
+    .await
+    .expect("failed to retrieve user from databse");
+
+    assert_eq!(db_user.username, "johndoe");
 }
 
 #[tokio::test]

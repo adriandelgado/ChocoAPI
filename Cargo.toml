@@ -22,29 +22,42 @@ tokio = { version = "1.20.1", features = ["rt-multi-thread", "macros"] }
 
 # State of the art password hashing.
 argon2 = { version = "0.4.1", features = ["zeroize"] }
+rand = { version = "0.8.5", features = ["min_const_gen", "getrandom"] }
+rand_chacha = "0.3.1"
+secrecy = { version = "0.8.0", features = ["serde"] }
 
-base32 = "0.4.0"
 # Load startup configuration from files and/or env. variables
 config = { version = "0.13.1", default-features = false, features = ["yaml"] }
 dotenv = "0.15.0"
-eyre = "0.6.8"
-http-api-problem = { version = "0.53.0", features = ["hyper"] }
+
+# http server
+tower-http = { version = "0.3.4", features = ["trace"] }
 hyper = { version = "0.14.20", features = ["server"] }
-rand = { version = "0.8.5", features = ["min_const_gen"] }
-rand_chacha = "0.3.1"
-secrecy = { version = "0.8.0", features = ["serde"] }
+
+# Strings and serialization
 serde = { version = "1.0.140", features = ["derive"] }
 serde_json = "1.0.82"
 stringprep = "0.1.2"
+base32 = "0.4.0"
+
+# Error handling
 thiserror = "1.0.31"
+eyre = "0.6.8"
+http-api-problem = { version = "0.53.0", features = ["hyper"] }
+
 time = { version = "0.3.11", features = ["serde-human-readable"] }
-tower-http = { version = "0.3.4", features = ["trace"] }
-tracing = "0.1.35"
-tracing-bunyan-formatter = "0.3.3"
-tracing-subscriber = { version = "0.3.15", features = ["env-filter"] }
 uuid = { version = "1.1.2", features = ["v4", "serde"] }
 validator = { version = "0.16.0", features = ["derive"] }
 image = "0.24.3"
+
+# Logging and debugging
+tracing = "0.1.35"
+tracing-bunyan-formatter = "0.3.3"
+tracing-subscriber = { version = "0.3.15", features = ["env-filter"] }
+axum-macros = "0.2.3"
+
+# Redis
+redis = { version = "0.17.0", features = ["tokio-comp"] }
 
 # Database client
 [dependencies.sqlx]

@@ -47,6 +47,4 @@ impl Deref for TestDatabase {
     }
 }
 
-// TODO: Se puede implementar Drop para que haga DROP DATABASE {database.name}
-
 // TODO: Implementar servicio de Redis

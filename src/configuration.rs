@@ -13,6 +13,7 @@ use std::{
 pub struct Settings {
     pub database: DatabaseSettings,
     pub application: ApplicationSettings,
+    pub redis: RedisSettings,
 }
 
 #[derive(serde::Deserialize, Clone, Debug)]
@@ -20,6 +21,20 @@ pub struct ApplicationSettings {
     pub port: u16,
     pub host: IpAddr,
     pub base_url: String,
+}
+
+// TODO: We may want to connect to a different database for testing.
+#[derive(serde::Deserialize, Clone, Debug)]
+pub struct RedisSettings {
+    pub host: IpAddr,
+    pub port: u16,
+}
+
+/// Return a connection object to send commands to Redis.
+pub async fn get_redis_client(config: &RedisSettings) -> redis::Client {
+    let conn_url = redis::parse_redis_url(&format!("redis://{}:{}", config.host, config.port))
+        .expect("failed to build redis connection url");
+    redis::Client::open(conn_url).expect("failed to create redis client")
 }
 
 #[derive(serde::Deserialize, Clone, Debug)]

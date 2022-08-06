@@ -5,3 +5,5 @@ database:
   host: "localhost"
   password: "LOCALTESTINGxmhu5jVVwJ4sMlz7DAdKf0z4QPFY9Yc"
   require_ssl: false
+redis:
+  host: "127.0.0.1"

@@ -1,5 +1,5 @@
 use crate::{
-    configuration::{DatabaseSettings, Settings},
+    configuration::{self, DatabaseSettings, Settings},
     repositories::{EmailRepository, ImageRepository, UserRepository},
     routes::{health_check, register},
 };
@@ -31,7 +31,9 @@ impl Application {
             configuration.application.port,
         ));
 
-        let app = app(connection_pool);
+        let redis_client = configuration::get_redis_client(&configuration.redis).await;
+
+        let app = app(connection_pool, redis_client);
 
         let server = axum::Server::bind(&address).serve(app.into_make_service());
 
@@ -86,12 +88,13 @@ pub async fn get_connection_pool(configuration: &DatabaseSettings) -> Result<PgP
 
 // TODO: only `merge` here and delegate to routes folder
 #[must_use]
-fn app(db_pool: PgPool) -> Router {
+fn app(db_pool: PgPool, redis_client: redis::Client) -> Router {
     Router::new()
         .route("/health_check", get(health_check))
         .route("/register", post(register))
         .layer(Extension(UserRepository::new(db_pool.clone())))
         .layer(Extension(ImageRepository::new(db_pool.clone())))
         .layer(Extension(EmailRepository::new(db_pool)))
+        .layer(Extension(redis_client))
         .layer(TraceLayer::new_for_http())
 }

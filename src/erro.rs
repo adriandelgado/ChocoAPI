@@ -3,7 +3,6 @@
 
 use std::collections::HashMap;
 use std::hash::Hash;
-use std::ops::Deref;
 
 use axum::{
     http::{header, HeaderValue, StatusCode},
@@ -12,65 +11,30 @@ use axum::{
 use http_api_problem::HttpApiProblem;
 use sqlx::error::DatabaseError;
 
-/// A type to be used for listing errors during request processing.
-#[derive(Debug)]
-pub struct ErrorMap<K, V>(HashMap<K, Vec<V>>);
-
-impl<K, V> ErrorMap<K, V>
-where
-    K: Eq + Hash + Clone,
-{
-    pub fn new() -> Self {
-        Self(HashMap::new())
+/// Add a new error to this error map.
+pub fn add_error<T: Eq + Hash + Clone, U: Clone>(
+    mut m: HashMap<T, Vec<U>>,
+    key: T,
+    value: U,
+) -> HashMap<T, Vec<U>> {
+    if !m.contains_key(&key) {
+        m.insert(key.clone(), Vec::new());
     }
-
-    /// Add a new error to this error map.
-    pub fn add_error<T, U>(&mut self, key: T, value: U) -> &mut Self
-    where
-        T: Into<K> + Clone,
-        U: Into<V>,
-    {
-        let key = key.into();
-
-        if !self.0.contains_key(&key) {
-            self.0.insert(key.clone(), Vec::new());
-        }
-
-        self.0.get_mut(&key).unwrap().push(value.into());
-        self
-    }
-
-    /// Merge into this error map the provided error map.
-    pub fn merge<T, U>(&mut self, other: ErrorMap<T, U>) -> &mut Self
-    where
-        T: Into<K> + Clone,
-        U: Into<V>,
-    {
-        for (k, v) in other.0 {
-            for err in v {
-                self.add_error(k.clone().into(), err.into());
-            }
-        }
-
-        self
-    }
+    m.get_mut(&key).unwrap().push(value.into());
+    m
 }
 
-impl<K, V> Default for ErrorMap<K, V>
-where
-    K: Eq + Hash + Clone,
-{
-    fn default() -> Self {
-        Self::new()
+/// Merge into this error map the provided error map.
+pub fn merge_errors<T: Eq + Hash + Clone, U: Clone>(
+    mut m1: HashMap<T, Vec<U>>,
+    m2: HashMap<T, Vec<U>>,
+) -> HashMap<T, Vec<U>> {
+    for (k, v) in &m2 {
+        for err in v {
+            m1 = add_error(m1, k.clone(), err.clone());
+        }
     }
-}
-
-impl<K, V> Deref for ErrorMap<K, V> {
-    type Target = HashMap<K, Vec<V>>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    m1
 }
 
 // A common error type that can be used throughout the API.
@@ -95,7 +59,7 @@ pub enum AppError {
     // NotFound,
     /// Return `422 Unprocessable Entity`
     #[error("error in the request body")]
-    UnprocessableEntity(ErrorMap<String, String>),
+    UnprocessableEntity(HashMap<String, Vec<String>>),
 
     /// Automatically return `500 Internal Server Error` on a `sqlx::Error`.
     ///

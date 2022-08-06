@@ -4,3 +4,5 @@ application:
 database:
   host: "postgres"
   require_ssl: true
+redis:
+  host: "redis"
