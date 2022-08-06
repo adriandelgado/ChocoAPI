@@ -193,6 +193,9 @@ jobs:
         ports:
           - 5432:5432
 
+    env:
+      DATABASE_URL: postgres://${{ matrix.pg-user }}:${{ matrix.pg-password }}@localhost:5432/${{ matrix.pg-db }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -223,6 +226,9 @@ jobs:
             --features "${{ matrix.sqlx-features }}"
             --no-default-features
             --locked
+
+      - name: Migrate database
+        run: sqlx migrate run
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
