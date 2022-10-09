@@ -22,7 +22,7 @@ jobs:
         pg-user: [postgres]
         pg-password: [LOCALTESTINGxmhu5jVVwJ4sMlz7DAdKf0z4QPFY9Yc]
         pg-db: [chocodb]
-        sqlx-version: [0.6.0]
+        sqlx-version: [0.6.2]
         sqlx-features: ["postgres rustls"]
 
     services:
@@ -120,7 +120,7 @@ jobs:
         pg-user: [postgres]
         pg-password: [LOCALTESTINGxmhu5jVVwJ4sMlz7DAdKf0z4QPFY9Yc]
         pg-db: [chocodb]
-        sqlx-version: [0.6.0]
+        sqlx-version: [0.6.2]
         sqlx-features: ["postgres rustls"]
 
     services:
@@ -180,7 +180,7 @@ jobs:
         pg-user: [postgres]
         pg-password: [LOCALTESTINGxmhu5jVVwJ4sMlz7DAdKf0z4QPFY9Yc]
         pg-db: [chocodb]
-        sqlx-version: [0.6.0]
+        sqlx-version: [0.6.2]
         sqlx-features: ["postgres rustls"]
 
     services:
